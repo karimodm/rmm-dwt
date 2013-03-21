@@ -1,5 +1,5 @@
 #include "Pixel.h"
-//test
+
 Pixel::Pixel() {}
 
 Pixel::Pixel(float Y, float Cb, float Cr) {
