@@ -45,45 +45,45 @@ int DeterminaTipo(char *Nombre)
   while (Nombre[f]!=0) f++;  
   while (Nombre[f]!='.' && f>0) f--; 
   if (!f++) 
-	  return NO_EXT;
+    return NO_EXT;
   else if (Mayusculas(Nombre[f])=='4' && Mayusculas(Nombre[f+1])=='2' && Mayusculas(Nombre[f+2])=='0')
-	  return YCbCr420;
+    return YCbCr420;
   else if (Mayusculas(Nombre[f])=='D' && Mayusculas(Nombre[f+1])=='W' && Mayusculas(Nombre[f+2])=='T')
-	  return DWT;
+    return DWT;
   else if (Mayusculas(Nombre[f])=='4' && Mayusculas(Nombre[f+1])=='2' && Mayusculas(Nombre[f+2])=='I')
-	  return YCbCr42i;
+    return YCbCr42i;
   else if (Mayusculas(Nombre[f])=='D' && Mayusculas(Nombre[f+1])=='W' && Mayusculas(Nombre[f+2])=='I')
-	  return DWi;
+    return DWi;
   else 
-	  return UNKNOWN;
+    return UNKNOWN;
 }
 
 void ProcesaArgumentos(int argc, char **argv)
 {
   if (argc>=2)
   {
-	  if (argc!=7 || strcmp(argv[1],"-i") || strcmp(argv[3],"-o") || atoi(argv[5])==0 || atoi(argv[6])==0)
-	  { 
-		  printf("\nTeclea \"-i ImagenFte.xxx -o ImagenDest.yyy ancho alto\"\n"); 
-		  exit(1); 
-	  }
-	  ancho=atoi(argv[5]);
-	  alto=atoi(argv[6]); 
-	  ficheroEntrada=argv[2];
-	  ficheroSalida=argv[4];
-	  if (DeterminaTipo(ficheroEntrada)==YCbCr420 && DeterminaTipo(ficheroSalida)==DWT)
-	    opcion=YCbCr420aDWT;
-	  else if (DeterminaTipo(ficheroEntrada)==DWT && DeterminaTipo(ficheroSalida)==YCbCr420)
-	    opcion=DWTaYCbCr420;
-	  else if (DeterminaTipo(ficheroEntrada)==YCbCr42i && DeterminaTipo(ficheroSalida)==DWi)
-	    opcion=YCbCr42iaDWi;
-	  else if (DeterminaTipo(ficheroEntrada)==DWi && DeterminaTipo(ficheroSalida)==YCbCr42i)
-	    opcion=DWiaYCbCr42i;
-	  else
-	  {
-		  printf("\nConversion no implementada (comprueba las extensiones)\n"); 
-		  exit(1); 
-	  }
+    if (argc!=7 || strcmp(argv[1],"-i") || strcmp(argv[3],"-o") || atoi(argv[5])==0 || atoi(argv[6])==0)
+    { 
+      printf("\nTeclea \"-i ImagenFte.xxx -o ImagenDest.yyy ancho alto\"\n"); 
+      exit(1); 
+    }
+    ancho=atoi(argv[5]);
+    alto=atoi(argv[6]); 
+    ficheroEntrada=argv[2];
+    ficheroSalida=argv[4];
+    if (DeterminaTipo(ficheroEntrada)==YCbCr420 && DeterminaTipo(ficheroSalida)==DWT)
+      opcion=YCbCr420aDWT;
+    else if (DeterminaTipo(ficheroEntrada)==DWT && DeterminaTipo(ficheroSalida)==YCbCr420)
+      opcion=DWTaYCbCr420;
+    else if (DeterminaTipo(ficheroEntrada)==YCbCr42i && DeterminaTipo(ficheroSalida)==DWi)
+      opcion=YCbCr42iaDWi;
+    else if (DeterminaTipo(ficheroEntrada)==DWi && DeterminaTipo(ficheroSalida)==YCbCr42i)
+      opcion=DWiaYCbCr42i;
+    else
+    {
+      printf("\nConversion no implementada (comprueba las extensiones)\n"); 
+      exit(1); 
+    }
   }
 }
 
@@ -110,17 +110,17 @@ int main(int argc, char **argv)
     if (opcion==YCbCr420aDWT)
     {
       if (CargaYCbCr420(ficheroEntrada, ancho, alto, Y420, Cb420, Cr420) != 0)
-	    {
-	      printf("Error al leer fichero\n");
-	      exit(1);
-	    }   
+      {
+        printf("Error al leer fichero\n");
+        exit(1);
+      }   
       // TODO: conversion .420 -> .DWT
       ConversionYCbCr420aDWT(ancho, alto, Y420, Cb420, Cr420);
       if (GuardaDWT420(ficheroSalida, ancho, alto, Y420, Cb420, Cr420) != 0)
       {
-			  printf("Error al escribir fichero\n");
+        printf("Error al escribir fichero\n");
         exit(1);
-  	  }
+      }
     }
     else
     {

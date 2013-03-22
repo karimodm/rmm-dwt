@@ -36,36 +36,36 @@ void LiberaPlano(int ancho, int alto, float ***Plano)
 
 void LeeBloque(FILE *fich,int tam, int *PuntBufferAux)
 {
-	fread(PuntBufferAux,sizeof(int),tam,fich);  
+  fread(PuntBufferAux,sizeof(int),tam,fich);  
 }
 
 void GuardaBloque(FILE *fich,int tam, int *PuntBufferAux)
 {
-	fwrite(PuntBufferAux,sizeof(int),tam,fich);
+  fwrite(PuntBufferAux,sizeof(int),tam,fich);
 }
 
 void LeeBloque(FILE *fich,int tam, float *PuntBufferAux)
 {
-	fread(PuntBufferAux,sizeof(float),tam,fich);  
+  fread(PuntBufferAux,sizeof(float),tam,fich);  
 }
 
 void GuardaBloque(FILE *fich,int tam, float *PuntBufferAux)
 {
-	fwrite(PuntBufferAux,sizeof(float),tam,fich);
+  fwrite(PuntBufferAux,sizeof(float),tam,fich);
 }
 
 void LeeBloqueDeByte(FILE *fich,int tam, int *PuntBufferAux)
 {
-	for (int f=0;f<tam;f++) *PuntBufferAux++=(unsigned char)getc(fich);
+  for (int f=0;f<tam;f++) *PuntBufferAux++=(unsigned char)getc(fich);
 }
 
 void GuardaBloqueEnByte(FILE *fich,int tam, int *PuntBufferAux)
 {
-	for (int f=0;f<tam;f++) 
-	{
-		if (*PuntBufferAux<0) putc(0,fich); else if (*PuntBufferAux>255) putc(255,fich); else putc(*PuntBufferAux,fich);
-		PuntBufferAux++;
-	}
+  for (int f=0;f<tam;f++) 
+  {
+    if (*PuntBufferAux<0) putc(0,fich); else if (*PuntBufferAux>255) putc(255,fich); else putc(*PuntBufferAux,fich);
+    PuntBufferAux++;
+  }
 }
 
 //

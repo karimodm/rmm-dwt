@@ -46,22 +46,22 @@ Pixel aplica_kernel_f(int x, int y, int ancho, float *Y420, float *Cb420, float 
 }
 
 void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-	float **_Y420 = malloc_2d(ancho, alto);
-	float **_Cr420 = malloc_2d(ancho, alto);
-	float **_Cb420 = malloc_2d(ancho, alto);
-	Pixel p;
-	for (int y = 0; y < alto; y++)
-	  for (int x = 0; x < ancho; x++) {
-	    p = aplica_kernel_f(x, y, ancho, Y420[y], Cr420[y], Cb420[y], (x % 2) == 0);
-	    _Y420[y][x]  = p.Y;
-	    _Cb420[y][x] = p.Cb;
-	    _Cr420[y][x] = p.Cr;
-	  }
+  float **_Y420 = malloc_2d(ancho, alto);
+  float **_Cr420 = malloc_2d(ancho, alto);
+  float **_Cb420 = malloc_2d(ancho, alto);
+  Pixel p;
+  for (int y = 0; y < alto; y++)
+    for (int x = 0; x < ancho; x++) {
+      p = aplica_kernel_f(x, y, ancho, Y420[y], Cr420[y], Cb420[y], (x % 2) == 0);
+      _Y420[y][x]  = p.Y;
+      _Cb420[y][x] = p.Cb;
+      _Cr420[y][x] = p.Cr;
+    }
 }
 //void DWT_f_columnas
 
 void ConversionYCbCr420aDWT(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-	
+  
 }
 
 
