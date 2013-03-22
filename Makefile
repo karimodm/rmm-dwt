@@ -1,13 +1,11 @@
 CC	=	g++
+CXXFLAGS = -g -O0 -Wno-write-strings
 
-OBJS	=	ImagenES.o CalculoDWT.o DWT.o
+OBJS	=	ImagenES.o CalculoDWT.o DWT.o Pixel.o
 BIN	=	DWT
 
-all:			$(OBJS)
-			$(CC) -Wall -o DWT $(OBJS)
+$(BIN): $(OBJS)
 
 clean:
 			rm -f $(BIN) $(OBJS)
 
-%.o: %.cpp
-			$(CC) -c $(CFLAGS) $< -o $@

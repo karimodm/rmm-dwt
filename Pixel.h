@@ -8,11 +8,12 @@ class Pixel {
 		float Cr;
 		Pixel();
 		Pixel(float, float, float);
-		Pixel(Pixel&);
-		Pixel &operator+(Pixel&);
-		Pixel &operator*(float);
-  	Pixel &operator=(Pixel&);
-  	Pixel &set(float, float, float)
+		Pixel operator+(const Pixel&);
+		Pixel &operator+=(const Pixel&);
+		Pixel operator*(float);
+		Pixel &operator*=(float);
+  	Pixel &operator=(const Pixel&);
+  	Pixel &set(float, float, float);
 		void value(float *, float *, float *);
 };
 
