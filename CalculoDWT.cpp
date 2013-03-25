@@ -52,7 +52,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   Pixel p;
   for (int y = 0; y < alto; y++)
     for (int x = 0; x < ancho; x++) {
-      p = aplica_kernel_f(x, y, ancho, Y420[y], Cr420[y], Cb420[y], (x % 2) == 0);
+      p = aplica_kernel_f(x, y, ancho, Y420[y], Cb420[y], Cr420[y], (x % 2) == 0);
       _Y420[y][x]  = p.Y;
       _Cb420[y][x] = p.Cb;
       _Cr420[y][x] = p.Cr;
