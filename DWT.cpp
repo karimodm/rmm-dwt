@@ -101,7 +101,7 @@ int main(int argc, char **argv)
   if (opcion==YCbCr420aDWT || opcion==DWTaYCbCr420)
   { // CONVERSION DE .420 A .DWT (FLOAT) o CONVERSION DE .DWT A .420 (FLOAT)
     
-    float **Y420, **Cb420, **Cr420;    
+    float **Y420, **Cb420, **Cr420;
     
     ReservaPlano(ancho, alto, &Y420);
     ReservaPlano(ancho/2, alto/2, &Cb420);
