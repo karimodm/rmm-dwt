@@ -98,16 +98,36 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   float **_Cb420 = malloc_2d(ancho/2, alto/2);
   float **_Cr420 = malloc_2d(ancho/2, alto/2);
 
-  for (int y = 0; y < alto; y++)
+  // llamada a aplica_kernel por cada elemento
+  for (int y = 0; y < alto; y++) {
     for (int x = 0; x < ancho; x++) {
       _Y420[y][x] = aplica_kernel_f(x, y, ancho, Y420[y], (x % 2) == 0);
       if (y < (alto/2) && x < (ancho/2)) {
-        _Cb420[x][y] = aplica_kernel_f(x, y, ancho/2, Cb420[y], (x % 2) == 0);
-        _Cr420[x][y] = aplica_kernel_f(x, y, ancho/2, Cr420[y], (x % 2) == 0);
+        _Cb420[y][x] = aplica_kernel_f(x, y, ancho/2, Cb420[y], (x % 2) == 0);
+        _Cr420[y][x] = aplica_kernel_f(x, y, ancho/2, Cr420[y], (x % 2) == 0);
       }
     }
+  }
+  // guardar los resultados en el orden correcto
+  for (int y = 0; y < alto; y++) {
+    for (int x = 0; x < ancho; x++) {
+      if (x % 2 == 0) { // es par => resultado del paso bajo
+        Y420[y][x/2] = _Y420[y][x];
+        if (y < (alto/2) && x < (ancho/2)) {
+          Cb420[y][x/2] = _Cb420[y][x];
+          Cr420[y][x/2] = _Cr420[y][x];
+        }
+      }
+      else { // es impar => resultado del paso alto
+        Y420[y][x/2 + ancho/2] = _Y420[y][x];
+        if (y < (alto/2) && x < (ancho/2)) {
+          Cb420[y][x/2 + ancho/2/2] = _Cb420[y][x];
+          Cr420[y][x/2 + ancho/2/2] = _Cr420[y][x];
+        }
+      }
+    }
+  }
 }
-
 
 void ConversionYCbCr420aDWT(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
   
