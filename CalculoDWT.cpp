@@ -195,7 +195,7 @@ float aplica_kernel(int x, int y, int ancho, int *comp, bool es_par, bool invers
 
 
 void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-  float **_Y420 = malloc_2d_f(ancho, alto);
+  /*float **_Y420 = malloc_2d_f(ancho, alto);
   float **_Cb420 = malloc_2d_f(ancho/2, alto/2);
   float **_Cr420 = malloc_2d_f(ancho/2, alto/2);
 
@@ -220,16 +220,16 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
         }
       }
       else { // es impar => resultado del paso alto
-         Y420[y][x/2 + ancho/2] = _Y420[y][x];
+         Y420[y][x/2 + ancho/2] = _Y420[y][x] * 2.0;
         if (y < (alto/2) && x < (ancho/2)) {
           int ancho_2 = ancho/2;
-          Cb420[y][x/2 + ancho_2/2] = _Cb420[y][x];
-          Cr420[y][x/2 + ancho_2/2] = _Cr420[y][x];
+          Cb420[y][x/2 + ancho_2/2] = _Cb420[y][x] * 2.0;
+          Cr420[y][x/2 + ancho_2/2] = _Cr420[y][x] * 2.0;
         }
       }
     }
-  }
-  /* TEST
+  }*/
+  // TEST
   float Muestras[32]= {33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43,33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43};
   float tmp[32];
   for (int i=0; i<32; i++) {
@@ -239,12 +239,12 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
     if (i % 2 == 0)
       Muestras[i/2] = tmp[i];
     else
-      Muestras[i/2+16] = tmp[i];
+      Muestras[i/2+16] = tmp[i]*2.0;
   }
   
   for (int i=0; i<32; i++) {
     if (i % 2 == 0)
-      tmp[i] = Muestras[i/2];
+      tmp[i] = Muestras[i/2]*2.0;
     else
       tmp[i] = Muestras[i/2+16]; 
   }
@@ -254,7 +254,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   }
   
   for (int i=0; i<32; i++)
-    printf("Resultado %i : %.2f \n", i+1, Muestras[i]);*/
+    printf("Resultado %i : %.2f \n", i+1, Muestras[i]);
 }
 
 void DWT_f_filas_i(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
@@ -266,10 +266,10 @@ void DWT_f_filas_i(int ancho, int alto, float **Y420, float **Cb420, float **Cr4
   for (int y = 0; y < alto; y++) {
     for (int x = 0; x < ancho; x++) {
       if (x % 2 == 0) { // es par => resultado del paso bajo
-        _Y420[y][x] = Y420[y][x/2];
+        _Y420[y][x] = Y420[y][x/2] * 2.0;
         if (y < (alto/2) && x < (ancho/2)) {
-          _Cb420[y][x] = Cb420[y][x/2];
-          _Cr420[y][x] = Cr420[y][x/2];
+          _Cb420[y][x] = Cb420[y][x/2] * 2.0;
+          _Cr420[y][x] = Cr420[y][x/2]* 2.0;
         }
       }
       else { // es impar => resultado del paso alto
@@ -331,6 +331,32 @@ void DWT_filas(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
       }
     }
   }
+  /* TEST
+   float Muestras[32]= {33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43,33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43};
+   float tmp[32];
+   for (int i=0; i<32; i++) {
+   tmp[i] = aplica_kernel_f(i, 1, 32, Muestras, (i % 2) == 0);
+   }
+   for (int i=0; i<32; i++) {
+   if (i % 2 == 0)
+   Muestras[i/2] = tmp[i];
+   else
+   Muestras[i/2+16] = tmp[i];
+   }
+   
+   for (int i=0; i<32; i++) {
+   if (i % 2 == 0)
+   tmp[i] = Muestras[i/2];
+   else
+   tmp[i] = Muestras[i/2+16];
+   }
+   
+   for (int i=0; i<32; i++) {
+   Muestras[i] = aplica_kernel_f(i, 1, 32, tmp, (i % 2) != 0, true);
+   }
+   
+   for (int i=0; i<32; i++)
+   printf("Resultado %i : %.2f \n", i+1, Muestras[i]);*/
 }
 
 void DWT_filas_i(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
@@ -377,7 +403,7 @@ void ConversionYCbCr420aDWT(int ancho, int alto, float **Y420, float **Cb420, fl
 }
 
 void ConversionDWTaYCbCr420(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-    DWT_f_filas_i(ancho, alto, Y420, Cb420, Cr420);
+  DWT_f_filas_i(ancho, alto, Y420, Cb420, Cr420);
 }
 
 void ConversionYCbCr42iaDWi(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
