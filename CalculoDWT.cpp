@@ -32,19 +32,15 @@ void __inline free_2d(int ancho, int alto, int **p) {
 }
 
 void trasponer_matriz(int ancho, int alto, float **M, float **Mt) {
-  for (int y = 0; y < alto; y++) {
-    for (int x = 0; x < ancho; x++) {
+  for (int y = 0; y < alto; y++)
+    for (int x = 0; x < ancho; x++)
       Mt[x][y] = M[y][x];
-    }
-  }
 }
 
 void trasponer_matriz(int ancho, int alto, int **M, int **Mt) {
-  for (int y = 0; y < alto; y++) {
-    for (int x = 0; x < ancho; x++) {
+  for (int y = 0; y < alto; y++)
+    for (int x = 0; x < ancho; x++)
       Mt[x][y] = M[y][x];
-    }
-  }
 }
 
 float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool inverso = false) {
@@ -286,19 +282,19 @@ void DWT_f_columnas(int ancho, int alto, float **Y420, float **Cb420, float **Cr
   float **_Y420 = malloc_2d_f(alto, ancho);
   float **_Cb420 = malloc_2d_f(alto/2, ancho/2);
   float **_Cr420 = malloc_2d_f(alto/2, ancho/2);
-  
+
   // trasponer matrices
   trasponer_matriz(ancho, alto, Y420, _Y420);
-  trasponer_matriz(ancho, alto, Cb420, _Cb420);
-  trasponer_matriz(ancho, alto, Cr420, _Cr420);
-  
+  trasponer_matriz(ancho/2, alto/2, Cb420, _Cb420);
+  trasponer_matriz(ancho/2, alto/2, Cr420, _Cr420);
+
   DWT_f_filas(alto, ancho, _Y420, _Cb420, _Cr420);
-  
+
   // retrasponer matrices
   trasponer_matriz(alto, ancho, _Y420, Y420);
-  trasponer_matriz(alto, ancho, _Cb420, Cb420);
-  trasponer_matriz(alto, ancho, _Cr420, Cr420);
-  
+  trasponer_matriz(alto/2, ancho/2, _Cb420, Cb420);
+  trasponer_matriz(alto/2, ancho/2, _Cr420, Cr420);
+
   free_2d_f(alto, ancho, _Y420);
   free_2d_f(alto/2, ancho/2, _Cb420);
   free_2d_f(alto/2, ancho/2, _Cr420);
@@ -311,15 +307,15 @@ void DWT_f_columnas_i(int ancho, int alto, float **Y420, float **Cb420, float **
   
   // trasponer matrices
   trasponer_matriz(ancho, alto, Y420, _Y420);
-  trasponer_matriz(ancho, alto, Cb420, _Cb420);
-  trasponer_matriz(ancho, alto, Cr420, _Cr420);
+  trasponer_matriz(ancho/2, alto/2, Cb420, _Cb420);
+  trasponer_matriz(ancho/2, alto/2, Cr420, _Cr420);
   
   DWT_f_filas_i(alto, ancho, _Y420, _Cb420, _Cr420);
   
   // retrasponer matrices
   trasponer_matriz(alto, ancho, _Y420, Y420);
-  trasponer_matriz(alto, ancho, _Cb420, Cb420);
-  trasponer_matriz(alto, ancho, _Cr420, Cr420);
+  trasponer_matriz(alto/2, ancho/2, _Cb420, Cb420);
+  trasponer_matriz(alto/2, ancho/2, _Cr420, Cr420);
   
   free_2d_f(alto, ancho, _Y420);
   free_2d_f(alto/2, ancho/2, _Cb420);
@@ -410,9 +406,11 @@ void DWT_filas_i(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
 
 void ConversionYCbCr420aDWT(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
   DWT_f_filas(ancho, alto, Y420, Cb420, Cr420);
+  DWT_f_columnas(ancho, alto, Y420, Cb420, Cr420);
 }
 
 void ConversionDWTaYCbCr420(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
+  DWT_f_columnas_i(ancho, alto, Y420, Cb420, Cr420);
   DWT_f_filas_i(ancho, alto, Y420, Cb420, Cr420);
 }
 

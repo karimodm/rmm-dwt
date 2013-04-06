@@ -108,13 +108,12 @@ int main(int argc, char **argv)
     ReservaPlano(ancho/2, alto/2, &Cr420);
     
     if (opcion==YCbCr420aDWT)
-    {
+    { // CONVERSION DE .420 A .DWT (FLOAT)
       if (CargaYCbCr420(ficheroEntrada, ancho, alto, Y420, Cb420, Cr420) != 0)
       {
         printf("Error al leer fichero\n");
         exit(1);
       }   
-      // TODO: conversion .420 -> .DWT
       ConversionYCbCr420aDWT(ancho, alto, Y420, Cb420, Cr420);
       if (GuardaDWT420(ficheroSalida, ancho, alto, Y420, Cb420, Cr420) != 0)
       {
@@ -123,7 +122,18 @@ int main(int argc, char **argv)
       }
     }
     else
-    {
+    { // CONVERSION DE .DWT A .420 (FLOAT)
+      if (CargaDWT420(ficheroEntrada, ancho, alto, Y420, Cb420, Cr420) != 0)
+      {
+        printf("Error al leer fichero\n");
+        exit(1);
+      }
+      ConversionDWTaYCbCr420(ancho, alto, Y420, Cb420, Cr420);
+      if (GuardaYCbCr420(ficheroSalida, ancho, alto, Y420, Cb420, Cr420) != 0)
+      {
+        printf("Error al escribir fichero\n");
+        exit(1);
+      }
     }
     
     LiberaPlano(ancho, alto, &Y420);
