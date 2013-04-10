@@ -100,7 +100,6 @@ int main(int argc, char **argv)
 
   if (opcion==YCbCr420aDWT || opcion==DWTaYCbCr420)
   { // CONVERSION DE .420 A .DWT (FLOAT) o CONVERSION DE .DWT A .420 (FLOAT)
-    
     float **Y420, **Cb420, **Cr420;
     
     ReservaPlano(ancho, alto, &Y420);
@@ -140,13 +139,17 @@ int main(int argc, char **argv)
     LiberaPlano(ancho/2, alto/2, &Cb420);
     LiberaPlano(ancho/2, alto/2, &Cr420);
   }
-  else if (opcion==YCbCr42iaDWi)
-  { // CONVERSION DE .42i A .DWi (ENTERO)
-    // TODO
-  }
   else
-  { // CONVERSION DE .DWi A .42i (ENTERO)
-    // TODO
+  { // CONVERSION DE .42i A .DWi (ENTERO) o CONVERSION DE .DWi A .42i (ENTERO)
+    
+    if (opcion==YCbCr42iaDWi)
+    { // CONVERSION DE .42i A .DWi (ENTERO)
+
+    }
+    else
+    { // CONVERSION DE .DWi A .42i (ENTERO)
+      
+    }
   }
 
   return 0;

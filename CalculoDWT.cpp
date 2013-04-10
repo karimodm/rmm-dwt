@@ -410,8 +410,8 @@ void ConversionYCbCr420aDWT(int ancho, int alto, float **Y420, float **Cb420, fl
 }
 
 void ConversionDWTaYCbCr420(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-  DWT_f_columnas_i(ancho, alto, Y420, Cb420, Cr420);
   DWT_f_filas_i(ancho, alto, Y420, Cb420, Cr420);
+  DWT_f_columnas_i(ancho, alto, Y420, Cb420, Cr420);
 }
 
 void ConversionYCbCr42iaDWi(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
