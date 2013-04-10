@@ -58,7 +58,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
           p[1] = comp[x - j];
         else
           p[1] = comp[x + j];
-        po += p[0] * pbf[j] + p[1] * pbf[j];
+        po += (p[0] * pbf[j]) + (p[1] * pbf[j]);
       }
     } else { // No es par... Es pasa alto!
       po *= paf[0];
@@ -71,7 +71,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
           p[1] = comp[x - j];
         else
           p[1] = comp[x + j];
-        po += p[0] * paf[j] + p[1] * paf[j];
+        po += (p[0] * paf[j]) + (p[1] * paf[j]);
       }
     }
   }
@@ -87,7 +87,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
           p[1] = comp[x - j];
         else
           p[1] = comp[x + j];
-        po += p[0] * pbf_i[j] + p[1] * pbf_i[j];
+        po += (p[0] * pbf_i[j]) + (p[1] * pbf_i[j]);
       }
     } else { // No es par... Es pasa alto!
       po *= paf_i[0];
@@ -100,7 +100,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
           p[1] = comp[x - j];
         else
           p[1] = comp[x + j];
-        po += p[0] * paf_i[j] + p[1] * paf_i[j];
+        po += (p[0] * paf_i[j]) + (p[1] * paf_i[j]);
       }
     }
   }
