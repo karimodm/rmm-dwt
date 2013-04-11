@@ -196,7 +196,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
         }
       }
       else { // es impar => resultado del paso alto
-         Y420[y][x/2 + ancho/2] = _Y420[y][x] * 2.0;
+        Y420[y][x/2 + ancho/2] = _Y420[y][x] * 2.0;
         if (y < (alto/2) && x < (ancho/2)) {
           int ancho_2 = ancho/2;
           Cb420[y][x/2 + ancho_2/2] = _Cb420[y][x] * 2.0;
@@ -249,7 +249,7 @@ void DWT_f_filas_i(int ancho, int alto, float **Y420, float **Cb420, float **Cr4
         _Y420[y][x] = Y420[y][x/2] * 2.0;
         if (y < (alto/2) && x < (ancho/2)) {
           _Cb420[y][x] = Cb420[y][x/2] * 2.0;
-          _Cr420[y][x] = Cr420[y][x/2]* 2.0;
+          _Cr420[y][x] = Cr420[y][x/2] * 2.0;
         }
       }
       else { // es impar => resultado del paso alto
@@ -328,16 +328,40 @@ void DWT_filas(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
   int **_Cb420 = malloc_2d(ancho/2, alto/2);
   int **_Cr420 = malloc_2d(ancho/2, alto/2);
   
-  // llamada a aplica_kernel por cada elemento
   for (int y = 0; y < alto; y++) {
-    for (int x = 0; x < ancho; x++) {
-      _Y420[y][x] = aplica_kernel(x, y, ancho, Y420[y], (x % 2) == 0);
+    for (int x = 1; x < ancho; x+=2) {
+      // posiciones impares, paso alto
+      int left = Y420[y][x-1];
+      int right = (x+1 < ancho) ? Y420[y][x+1] : Y420[y][x-1];
+      _Y420[y][x] = Y420[y][x] - 0.5 * (left + right);
       if (y < (alto/2) && x < (ancho/2)) {
-        _Cb420[y][x] = aplica_kernel(x, y, ancho/2, Cb420[y], (x % 2) == 0);
-        _Cr420[y][x] = aplica_kernel(x, y, ancho/2, Cr420[y], (x % 2) == 0);
+        left = Cb420[y][x-1];
+        right = (x+1 < ancho) ? Cb420[y][x+1] : Cb420[y][x-1];
+        _Cb420[y][x] = Cb420[y][x] - 0.5 * (left + right);
+        left = Cr420[y][x-1];
+        right = (x+1 < ancho) ? Cr420[y][x+1] : Cr420[y][x-1];
+        _Cr420[y][x] = Cr420[y][x] - 0.5 * (left + right);
       }
     }
   }
+  
+  for (int y = 0; y < alto; y++) {
+    for (int x = 0; x < ancho; x+=2) {
+      // posiciones pares, paso bajo
+      int left = (x > 0) ? _Y420[y][x-1] : _Y420[y][x+1];
+      int right = (x+1 < ancho) ? _Y420[y][x+1] : _Y420[y][x-1];
+      _Y420[y][x] = Y420[y][x] + 0.25 * (left + right);
+      if (y < (alto/2) && x < (ancho/2)) {
+        left = (x > 0) ? _Cb420[y][x-1] : _Cb420[y][x+1];
+        right = (x+1 < ancho) ? _Cb420[y][x+1] : _Cb420[y][x-1];
+        _Cb420[y][x] = Cb420[y][x] + 0.25 * (left + right);
+        left = (x > 0) ? _Cr420[y][x-1] : _Cr420[y][x+1];
+        right = (x+1 < ancho) ? _Cr420[y][x+1] : _Cr420[y][x-1];
+        _Cr420[y][x] = Cr420[y][x] + 0.25 * (left + right);
+      }
+    }
+  }
+  
   // guardar los resultados en el orden correcto
   for (int y = 0; y < alto; y++) {
     for (int x = 0; x < ancho; x++) {
@@ -361,6 +385,7 @@ void DWT_filas(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
   free_2d(ancho, alto, _Y420);
   free_2d(ancho/2, alto/2, _Cb420);
   free_2d(ancho/2, alto/2, _Cr420);
+  
 }
 
 void DWT_filas_i(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
@@ -389,16 +414,40 @@ void DWT_filas_i(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
     }
   }
   
-  // llamada a aplica_kernel (inverso) por cada elemento
   for (int y = 0; y < alto; y++) {
-    for (int x = 0; x < ancho; x++) {
-      Y420[y][x] = aplica_kernel(x, y, ancho, _Y420[y], (x % 2) == 0, true);
+    for (int x = 0; x < ancho; x+=2) {
+      // posiciones pares, paso bajo
+      int left = (x > 0) ? _Y420[y][x-1] : _Y420[y][x+1];
+      int right = (x+1 < ancho) ? _Y420[y][x+1] : _Y420[y][x-1];
+      Y420[y][x] = _Y420[y][x] - 0.25 * (left + right);
       if (y < (alto/2) && x < (ancho/2)) {
-        Cb420[y][x] = aplica_kernel(x, y, ancho/2, _Cb420[y], (x % 2) == 0, true);
-        Cr420[y][x] = aplica_kernel(x, y, ancho/2, _Cr420[y], (x % 2) == 0, true);
+        left = (x > 0) ? _Cb420[y][x-1] : _Cb420[y][x+1];
+        right = (x+1 < ancho) ? _Cb420[y][x+1] : _Cb420[y][x-1];
+        Cb420[y][x] = _Cb420[y][x] - 0.25 * (left + right);
+        left = (x > 0) ? _Cr420[y][x-1] : _Cr420[y][x+1];
+        right = (x+1 < ancho) ? _Cr420[y][x+1] : _Cr420[y][x-1];
+        Cr420[y][x] = _Cr420[y][x] - 0.25 * (left + right);
       }
     }
   }
+  
+  for (int y = 0; y < alto; y++) {
+    for (int x = 1; x < ancho; x+=2) {
+      // posiciones impares, paso alto
+      int left = Y420[y][x-1];
+      int right = (x+1 < ancho) ? Y420[y][x+1] : Y420[y][x-1];
+      Y420[y][x] = _Y420[y][x] + 0.5 * (left + right);
+      if (y < (alto/2) && x < (ancho/2)) {
+        left = Cb420[y][x-1];
+        right = (x+1 < ancho) ? Cb420[y][x+1] : Cb420[y][x-1];
+        Cb420[y][x] = _Cb420[y][x] + 0.5 * (left + right);
+        left = Cr420[y][x-1];
+        right = (x+1 < ancho) ? Cr420[y][x+1] : Cr420[y][x-1];
+        Cr420[y][x] = _Cr420[y][x] + 0.5 * (left + right);
+      }
+    }
+  }
+
   free_2d(ancho, alto, _Y420);
   free_2d(ancho/2, alto/2, _Cb420);
   free_2d(ancho/2, alto/2, _Cr420);
