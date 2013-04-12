@@ -453,6 +453,50 @@ void DWT_filas_i(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
   free_2d(ancho/2, alto/2, _Cr420);
 }
 
+void DWT_columnas(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
+  int **_Y420 = malloc_2d(alto, ancho);
+  int **_Cb420 = malloc_2d(alto/2, ancho/2);
+  int **_Cr420 = malloc_2d(alto/2, ancho/2);
+  
+  // trasponer matrices
+  trasponer_matriz(ancho, alto, Y420, _Y420);
+  trasponer_matriz(ancho/2, alto/2, Cb420, _Cb420);
+  trasponer_matriz(ancho/2, alto/2, Cr420, _Cr420);
+  
+  DWT_filas(alto, ancho, _Y420, _Cb420, _Cr420);
+  
+  // retrasponer matrices
+  trasponer_matriz(alto, ancho, _Y420, Y420);
+  trasponer_matriz(alto/2, ancho/2, _Cb420, Cb420);
+  trasponer_matriz(alto/2, ancho/2, _Cr420, Cr420);
+  
+  free_2d(alto, ancho, _Y420);
+  free_2d(alto/2, ancho/2, _Cb420);
+  free_2d(alto/2, ancho/2, _Cr420);
+}
+
+void DWT_columnas_i(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
+  int **_Y420 = malloc_2d(alto, ancho);
+  int **_Cb420 = malloc_2d(alto/2, ancho/2);
+  int **_Cr420 = malloc_2d(alto/2, ancho/2);
+  
+  // trasponer matrices
+  trasponer_matriz(ancho, alto, Y420, _Y420);
+  trasponer_matriz(ancho/2, alto/2, Cb420, _Cb420);
+  trasponer_matriz(ancho/2, alto/2, Cr420, _Cr420);
+  
+  DWT_filas_i(alto, ancho, _Y420, _Cb420, _Cr420);
+  
+  // retrasponer matrices
+  trasponer_matriz(alto, ancho, _Y420, Y420);
+  trasponer_matriz(alto/2, ancho/2, _Cb420, Cb420);
+  trasponer_matriz(alto/2, ancho/2, _Cr420, Cr420);
+  
+  free_2d(alto, ancho, _Y420);
+  free_2d(alto/2, ancho/2, _Cb420);
+  free_2d(alto/2, ancho/2, _Cr420);
+}
+
 void ConversionYCbCr420aDWT(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
   DWT_f_filas(ancho, alto, Y420, Cb420, Cr420);
   DWT_f_columnas(ancho, alto, Y420, Cb420, Cr420);
@@ -465,9 +509,11 @@ void ConversionDWTaYCbCr420(int ancho, int alto, float **Y420, float **Cb420, fl
 
 void ConversionYCbCr42iaDWi(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
   DWT_filas(ancho, alto, Y420, Cb420, Cr420);
+  DWT_columnas(ancho, alto, Y420, Cb420, Cr420);
 }
 
 void ConversionDWiaYCbCr42i(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
+  DWT_columnas_i(ancho, alto, Y420, Cb420, Cr420);
   DWT_filas_i(ancho, alto, Y420, Cb420, Cr420);
 }
 

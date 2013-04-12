@@ -141,16 +141,43 @@ int main(int argc, char **argv)
   }
   else
   { // CONVERSION DE .42i A .DWi (ENTERO) o CONVERSION DE .DWi A .42i (ENTERO)
+    int **Y42i, **Cb42i, **Cr42i;
+    
+    ReservaPlano(ancho, alto, &Y42i);
+    ReservaPlano(ancho/2, alto/2, &Cb42i);
+    ReservaPlano(ancho/2, alto/2, &Cr42i);
     
     if (opcion==YCbCr42iaDWi)
     { // CONVERSION DE .42i A .DWi (ENTERO)
-
+      if (CargaDWT420q(ficheroEntrada, ancho, alto, Y42i, Cb42i, Cr42i) != 0)
+      {
+        printf("Error al leer fichero\n");
+        exit(1);
+      }
+      ConversionYCbCr42iaDWi(ancho, alto, Y42i, Cb42i, Cr42i);
+      if (GuardaDWT420q(ficheroSalida, ancho, alto, Y42i, Cb42i, Cr42i) != 0)
+      {
+        printf("Error al escribir fichero\n");
+        exit(1);
+      }
     }
     else
     { // CONVERSION DE .DWi A .42i (ENTERO)
-      
+      if (CargaDWT420q(ficheroEntrada, ancho, alto, Y42i, Cb42i, Cr42i) != 0)
+      {
+        printf("Error al leer fichero\n");
+        exit(1);
+      }
+      ConversionDWiaYCbCr42i(ancho, alto, Y42i, Cb42i, Cr42i);
+      if (GuardaDWT420q(ficheroSalida, ancho, alto, Y42i, Cb42i, Cr42i) != 0)
+      {
+        printf("Error al escribir fichero\n");
+        exit(1);
+      }
     }
+    LiberaPlano(ancho, alto, &Y42i);
+    LiberaPlano(ancho/2, alto/2, &Cb42i);
+    LiberaPlano(ancho/2, alto/2, &Cr42i);
   }
-
   return 0;
 }
