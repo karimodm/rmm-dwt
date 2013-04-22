@@ -8,7 +8,6 @@ BIN	=	DWT
 all: $(BIN)
 
 $(BIN): $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS) -o $(BIN)
 
 clean:
 			rm -f $(BIN) $(OBJS)
