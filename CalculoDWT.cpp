@@ -44,11 +44,11 @@ void trasponer_matriz(int ancho, int alto, int **M, int **Mt) {
 }
 
 float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool inverso = false) {
-  float po = comp[x];
+  float po = 0.0;
   float p[2];
   if (inverso == false) {
     if (es_par) { // Es paso bajo!
-      po *= pbf[0];
+      po = comp[x] * pbf[0];
       for (int j = 1; j < 5; j++) {
         if (x - j < 0)
           p[0] = comp[j - x];
@@ -61,7 +61,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
         po += (p[0] * pbf[j]) + (p[1] * pbf[j]);
       }
     } else { // No es par... Es paso alto!
-      po *= paf[0];
+      po = comp[x] * paf[0];
       for (int j = 1; j < 4; j++) {
         if (x - j < 0)
           p[0] = comp[j - x];
@@ -77,7 +77,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
   }
   else {
     if (!es_par) { // Es paso bajo!
-      po *= pbf_i[0];
+      po = comp[x] * pbf_i[0];
       for (int j = 1; j < 4; j++) {
         if (x - j < 0)
           p[0] = comp[j - x];
@@ -89,8 +89,8 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
           p[1] = comp[x + j];
         po += (p[0] * pbf_i[j]) + (p[1] * pbf_i[j]);
       }
-    } else { // No es par... Es pasa alto!
-      po *= paf_i[0];
+    } else { // No es par... Es paso alto!
+      po = comp[x] * paf_i[0];
       for (int j = 1; j < 5; j++) {
         if (x - j < 0)
           p[0] = comp[j - x];
@@ -107,71 +107,10 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
   return po;
 }
 
-float aplica_kernel(int x, int y, int ancho, int *comp, bool es_par, bool inverso = false) {
-  int po = comp[x];
-  int p[2];
-  if (inverso == false) {
-    if (es_par) { // Es paso bajo!
-      po *= pb[0];
-      for (int j = 1; j < 3; j++) {
-        if (x - j < 0)
-          p[0] = comp[x + j];
-        else
-          p[0] = comp[x - j];
-        if (x + j >= ancho)
-          p[1] = comp[x - j];
-        else
-          p[1] = comp[x + j];
-        po += p[0] * pb[j] + p[1] * pb[j];
-      }
-    } else { // No es par... Es pasa alto!
-      po *= pa[0];
-      // j == 1
-      if (x - 1 < 0)
-        p[0] = comp[x + 1];
-      else
-        p[0] = comp[x - 1];
-      if (x + 1 >= ancho)
-        p[1] = comp[x - 1];
-      else
-        p[1] = comp[x + 1];
-      po += p[0] * pa[1] + p[1] * pa[1];
-    }
-  }
-  else {
-    if (!es_par) { // Es paso bajo!
-      po *= pb_i[0];
-      // j == 1
-      if (x - 1 < 0)
-        p[0] = comp[x + 1];
-      else
-        p[0] = comp[x - 1];
-      if (x + 1 >= ancho)
-        p[1] = comp[x - 1];
-      else
-        p[1] = comp[x + 1];
-      po += p[0] * pb_i[1] + p[1] * pb_i[1];
-    } else { // No es par... Es pasa alto!
-      po *= pa_i[0];
-      for (int j = 1; j < 3; j++) {
-        if (x - j < 0)
-          p[0] = comp[x + j];
-        else
-          p[0] = comp[x - j];
-        if (x + j >= ancho)
-          p[1] = comp[x - j];
-        else
-          p[1] = comp[x + j];
-        po += p[0] * pa_i[j] + p[1] * pa_i[j];
-      }
-    }
-  }
-  return po;
-}
 
 
 void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-  float **_Y420 = malloc_2d_f(ancho, alto);
+  /*float **_Y420 = malloc_2d_f(ancho, alto);
   float **_Cb420 = malloc_2d_f(ancho/2, alto/2);
   float **_Cr420 = malloc_2d_f(ancho/2, alto/2);
 
@@ -207,7 +146,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   }
   free_2d_f(ancho, alto, _Y420);
   free_2d_f(ancho/2, alto/2, _Cb420);
-  free_2d_f(ancho/2, alto/2, _Cr420);
+  free_2d_f(ancho/2, alto/2, _Cr420);*/
   
   // TEST
   float Muestras[32]= {33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43,33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43};
