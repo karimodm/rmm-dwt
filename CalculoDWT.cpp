@@ -107,6 +107,66 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
   return po;
 }
 
+float aplica_kernel(int x, int y, int ancho, int *comp, bool es_par, bool inverso = false) {
+  int po = 0.0;
+  int p[2];
+  if (inverso == false) {
+    if (es_par) { // Es paso bajo!
+      po = comp[x] * pb[0];
+      for (int j = 1; j < 3; j++) {
+        if (x - j < 0)
+          p[0] = comp[j - x];
+        else
+          p[0] = comp[x - j];
+        if (x + j >= ancho)
+          p[1] = comp[ancho-(j-(ancho-x))-2];
+        else
+          p[1] = comp[x + j];
+        po += p[0] * pb[j] + p[1] * pb[j];
+      }
+    } else { // No es par... Es pasa alto!
+      // j siempre es 1, el filtro es de 3
+      po = comp[x] * pa[0];
+      if (x - 1 < 0)
+        p[0] = comp[1 - x];
+      else
+        p[0] = comp[x - 1];
+      if (x + 1 >= ancho)
+        p[1] = comp[ancho-(1-(ancho-x))-2];
+      else
+        p[1] = comp[x + 1];
+      po += p[0] * pa[1] + p[1] * pa[1];
+    }
+  }
+  else {
+    if (!es_par) { // Es paso bajo!
+      po = comp[x] * pb_i[0];
+      if (x - 1 < 0)
+        p[0] = comp[1 - x];
+      else
+        p[0] = comp[x - 1];
+      if (x + 1 >= ancho)
+        p[1] = comp[ancho-(1-(ancho-x))-2];
+      else
+        p[1] = comp[x + 1];
+      po += p[0] * pb_i[1] + p[1] * pb_i[1];
+    } else { // No es par... Es pasa alto!
+      po *= pa_i[0];
+      for (int j = 1; j < 3; j++) {
+        if (x - j < 0)
+          p[0] = comp[j - x];
+        else
+          p[0] = comp[x - j];
+        if (x + j >= ancho)
+          p[1] = comp[ancho-(j-(ancho-x))-2];
+        else
+          p[1] = comp[x + j];
+        po += p[0] * pa_i[j] + p[1] * pa_i[j];
+      }
+    }
+  }
+  return po;
+}
 
 
 void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
@@ -149,10 +209,10 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   free_2d_f(ancho/2, alto/2, _Cr420);*/
   
   // TEST
-  float Muestras[32]= {33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43,33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43};
-  float tmp[32];
+  int Muestras[32]= {33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43,33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43};
+  int tmp[32];
   for (int i=0; i<32; i++) {
-    tmp[i] = aplica_kernel_f(i, 1, 32, Muestras, (i % 2) == 0);
+    tmp[i] = aplica_kernel(i, 1, 32, Muestras, (i % 2) == 0);
   }
   for (int i=0; i<32; i++) {
     if (i % 2 == 0)
@@ -169,11 +229,11 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   }
   
   for (int i=0; i<32; i++) {
-    Muestras[i] = aplica_kernel_f(i, 1, 32, tmp, (i % 2) == 0, true);
+    Muestras[i] = aplica_kernel(i, 1, 32, tmp, (i % 2) == 0, true);
   }
   
   for (int i=0; i<32; i++) {
-    printf("%.2f ", Muestras[i]);
+    printf("%d ", Muestras[i]);
     if(!((i+1)%11)) printf("\n");
   }
   printf("\n");
