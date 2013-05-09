@@ -148,7 +148,7 @@ int CargaYCbCr420(char *Nombre, int ancho, int alto, float **Y, float **Cb420, f
 int GuardaYCbCr420(char *Nombre, int ancho, int alto, float **Y, float **Cb420, float **Cr420)
 {
   FILE *fich;
-
+  
   fich=fopen(Nombre,"wb");
   if (fich==NULL) return 1;
   GuardaPlano(fich, ancho, alto, Y);

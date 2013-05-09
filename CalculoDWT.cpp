@@ -107,7 +107,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
   return po;
 }
 
-float aplica_kernel(int x, int y, int ancho, int *comp, bool es_par, bool inverso = false) {
+/*float aplica_kernel(int x, int y, int ancho, int *comp, bool es_par, bool inverso = false) {
   int po = 0.0;
   int p[2];
   if (inverso == false) {
@@ -166,7 +166,7 @@ float aplica_kernel(int x, int y, int ancho, int *comp, bool es_par, bool invers
     }
   }
   return po;
-}
+}*/
 
 
 void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
