@@ -76,7 +76,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
     }
   }
   else {
-    if (!es_par) { // Es paso bajo!
+    if (es_par) { // Es paso bajo!
       po = comp[x] * pbf_i[0];
       for (int j = 1; j < 4; j++) {
         if (x - j < 0)
@@ -211,6 +211,8 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   // TEST
   float Muestras[32]= {33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43,33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43};
   float tmp[32];
+  float hlv1[32] = {0.0};
+  float hlv2[32] = {0.0};
   for (int i=0; i<32; i++) {
     tmp[i] = aplica_kernel_f(i, 1, 32, Muestras, (i % 2) == 0);
   }
@@ -218,18 +220,21 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
     if (i % 2 == 0)
       Muestras[i/2] = tmp[i];
     else
-      Muestras[i/2+16] = tmp[i]*2.0;
+      Muestras[i/2+16] = tmp[i];
+  }
+  
+  // proceso inverso
+  for (int i=0; i<32; i++) {
+    if (i%2 == 0) {
+      hlv1[i] = Muestras[i/2];
+    }
+    else {
+      hlv2[i] = Muestras[i/2+16];
+    }
   }
   
   for (int i=0; i<32; i++) {
-    if (i % 2 == 0)
-      tmp[i] = Muestras[i/2]*2.0;
-    else
-      tmp[i] = Muestras[i/2+16];
-  }
-  
-  for (int i=0; i<32; i++) {
-    Muestras[i] = aplica_kernel_f(i, 1, 32, tmp, (i % 2) == 0, true);
+    Muestras[i] = aplica_kernel_f(i, 1, 32, hlv1, true, true) + aplica_kernel_f(i, 1, 32, hlv2, false, true);
   }
   
   for (int i=0; i<32; i++) {
