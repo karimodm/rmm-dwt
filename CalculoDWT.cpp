@@ -76,7 +76,7 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
     }
   }
   else {
-    if (es_par) { // Es paso bajo!
+    /*if (es_par) { // Es paso bajo!
       po = comp[x] * pbf_i[0];
       for (int j = 1; j < 4; j++) {
         if (x - j < 0)
@@ -102,7 +102,35 @@ float aplica_kernel_f(int x, int y, int ancho, float *comp, bool es_par, bool in
           p[1] = comp[x + j];
         po += (p[0] * paf_i[j]) + (p[1] * paf_i[j]);
       }
+    }*/
+    po = (es_par ? pbf_i[0] : paf_i[0]) * comp[x];
+    bool es_par_rel = !es_par;
+    for (int j = 1; j < 5; j++) {
+      if (es_par_rel && j < 4) {
+        es_par_rel = false;
+        if (x - j < 0)
+          p[0] = comp[j - x];
+        else
+          p[0] = comp[x - j];
+        if (x + j >= ancho)
+          p[1] = comp[ancho-(j-(ancho-x))-2];
+        else
+          p[1] = comp[x + j];
+        po += (p[0] * pbf_i[j]) + (p[1] * pbf_i[j]);
+      } else if (!es_par_rel){
+        es_par_rel = true;
+        if (x - j < 0)
+          p[0] = comp[j - x];
+        else
+          p[0] = comp[x - j];
+        if (x + j >= ancho)
+          p[1] = comp[ancho-(j-(ancho-x))-2];
+        else
+          p[1] = comp[x + j];
+        po += (p[0] * paf_i[j]) + (p[1] * paf_i[j]);
+      }
     }
+    
   }
   return po;
 }
@@ -208,11 +236,11 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   free_2d_f(ancho/2, alto/2, _Cb420);
   free_2d_f(ancho/2, alto/2, _Cr420);
   
-  /* TEST
+  // TEST
   float Muestras[32]= {33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43,33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43};
   float tmp[32];
   float hlv1[32] = {0.0};
-  float hlv2[32] = {0.0};
+  //float hlv2[32] = {0.0};
   for (int i=0; i<32; i++) {
     tmp[i] = aplica_kernel_f(i, 1, 32, Muestras, (i % 2) == 0);
   }
@@ -224,7 +252,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   }
   
   // proceso inverso
-  for (int i=0; i<32; i++) {
+  /*for (int i=0; i<32; i++) {
     if (i%2 == 0) {
       hlv1[i] = Muestras[i/2];
     }
@@ -235,45 +263,48 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   
   for (int i=0; i<32; i++) {
     Muestras[i] = aplica_kernel_f(i, 1, 32, hlv1, true, true) + aplica_kernel_f(i, 1, 32, hlv2, false, true);
+  }*/
+  for (int i=0; i<32; i++) {
+    if (i%2 == 0) {
+      hlv1[i] = Muestras[i/2];
+    }
+    else {
+      hlv1[i] = Muestras[i/2+16];
+    }
   }
+  for (int i=0; i<32; i++) {
+    Muestras[i] = aplica_kernel_f(i, 1, 32, hlv1, (i % 2) == 0, true);
+  }
+
   
   for (int i=0; i<32; i++) {
     printf("%.2f ", Muestras[i]);
     if(!((i+1)%11)) printf("\n");
   }
-  printf("\n");*/
+  printf("\n");
 }
 
 void DWT_f_filas_i(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-  float **_Y420_b = malloc_2d_f(ancho, alto);
-  float **_Y420_a = malloc_2d_f(ancho, alto);
-  float **_Cb420_b = malloc_2d_f(ancho/2, alto/2);
-  float **_Cb420_a = malloc_2d_f(ancho/2, alto/2);
-  float **_Cr420_b = malloc_2d_f(ancho/2, alto/2);
-  float **_Cr420_a = malloc_2d_f(ancho/2, alto/2);
+  float **_Y420 = malloc_2d_f(ancho, alto);
+  float **_Cb420 = malloc_2d_f(ancho/2, alto/2);
+  float **_Cr420 = malloc_2d_f(ancho/2, alto/2);
   
   // reorganizar el orden de los elementos
   for (int y = 0; y < alto; y++) {
     for (int x = 0; x < ancho; x++) {
       if (x % 2 == 0) { // es par => resultado del paso bajo
-        _Y420_b[y][x] = Y420[y][x/2];
-        _Y420_a[y][x] = 0.0;
+        _Y420[y][x] = Y420[y][x/2];
         if (y < (alto/2) && x < (ancho/2)) {
-          _Cb420_b[y][x] = Cb420[y][x/2];
-          _Cb420_a[y][x] = 0.0;
-          _Cr420_b[y][x] = Cr420[y][x/2];
-          _Cr420_a[y][x] = 0.0;
+          _Cb420[y][x] = Cb420[y][x/2];
+          _Cr420[y][x] = Cr420[y][x/2];
         }
       }
       else { // es impar => resultado del paso alto
-        _Y420_a[y][x] = Y420[y][x/2 + ancho/2];
-        _Y420_b[y][x] = 0.0;
+        _Y420[y][x] = Y420[y][x/2 + ancho/2];
         if (y < (alto/2) && x < (ancho/2)) {
           int ancho_2 = ancho/2;
-          _Cb420_a[y][x] = Cb420[y][x/2 + ancho_2/2];
-          _Cb420_b[y][x] = 0.0;
-          _Cr420_a[y][x] = Cr420[y][x/2 + ancho_2/2];
-          _Cr420_b[y][x] = 0.0;
+          _Cb420[y][x] = Cb420[y][x/2 + ancho_2/2];
+          _Cr420[y][x] = Cr420[y][x/2 + ancho_2/2];
         }
       }
     }
@@ -282,19 +313,16 @@ void DWT_f_filas_i(int ancho, int alto, float **Y420, float **Cb420, float **Cr4
   // llamada a aplica_kernel (inverso) por cada elemento
   for (int y = 0; y < alto; y++) {
     for (int x = 0; x < ancho; x++) {
-      Y420[y][x] = aplica_kernel_f(x, y, ancho, _Y420_b[y], true, true) + aplica_kernel_f(x, y, ancho, _Y420_a[y], false, true);
+      Y420[y][x] = aplica_kernel_f(x, y, ancho, _Y420[y], (x % 2) == 0, true);
       if (y < (alto/2) && x < (ancho/2)) {
-        Cb420[y][x] = aplica_kernel_f(x, y, ancho/2, _Cb420_b[y], true, true) + aplica_kernel_f(x, y, ancho/2, _Cb420_a[y], false, true);
-        Cr420[y][x] = aplica_kernel_f(x, y, ancho/2, _Cr420_b[y], true, true) + aplica_kernel_f(x, y, ancho/2, _Cr420_a[y], false, true);
+        Cb420[y][x] = aplica_kernel_f(x, y, ancho/2, _Cb420[y], (x % 2) == 0, true);
+        Cr420[y][x] = aplica_kernel_f(x, y, ancho/2, _Cr420[y], (x % 2) == 0, true);
       }
     }
   }
-  free_2d_f(ancho, alto, _Y420_b);
-  free_2d_f(ancho, alto, _Y420_a);
-  free_2d_f(ancho/2, alto/2, _Cb420_b);
-  free_2d_f(ancho/2, alto/2, _Cb420_a);
-  free_2d_f(ancho/2, alto/2, _Cr420_b);
-  free_2d_f(ancho/2, alto/2, _Cr420_a);
+  free_2d_f(ancho, alto, _Y420);
+  free_2d_f(ancho/2, alto/2, _Cb420);
+  free_2d_f(ancho/2, alto/2, _Cr420);
 }
 
 void DWT_f_columnas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
