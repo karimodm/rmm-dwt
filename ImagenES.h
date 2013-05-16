@@ -31,4 +31,6 @@ int GuardaDWT420q(char *Nombre, int ancho, int alto, int **Y, int **Cb420, int *
 int GuardaBloque(char *Nombre, int ancho, int alto, int nivel, int subbanda, int **Bloque);
 int CargaBloque(char *Nombre, int *ancho, int *alto, int *nivel, int *subbanda, int **Bloque);
 
+void PRUEBA();
+
 #endif

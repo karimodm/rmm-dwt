@@ -79,6 +79,8 @@ void ProcesaArgumentos(int argc, char **argv)
       opcion=YCbCr42iaDWi;
     else if (DeterminaTipo(ficheroEntrada)==DWi && DeterminaTipo(ficheroSalida)==YCbCr42i)
       opcion=DWiaYCbCr42i;
+    else if (DeterminaTipo(ficheroEntrada)==YCbCr420 && DeterminaTipo(ficheroSalida)==YCbCr420)
+      PRUEBA();
     else
     {
       printf("\nConversion no implementada (comprueba las extensiones)\n"); 
@@ -87,7 +89,54 @@ void ProcesaArgumentos(int argc, char **argv)
   }
 }
 
-int main(int argc, char **argv) 
+float CalculaMSE(float **Y1, float **Y2, int ancho, int alto)
+{
+	// COMPLETAR
+  float res = 0.0;
+  
+  for (int al=0; al<alto; al++) {
+    for (int an=0; an<ancho; an++) {
+      res += ((Y1[al][an]-Y2[al][an])*(Y1[al][an]-Y2[al][an]));
+    }
+  }
+  res /= (float)(ancho*alto);
+  
+  return res;
+}
+
+void PRUEBA() {
+  float **Y420, **Cb420, **Cr420;
+  
+  ReservaPlano(ancho, alto, &Y420);
+  ReservaPlano(ancho/2, alto/2, &Cb420);
+  ReservaPlano(ancho/2, alto/2, &Cr420);
+  
+  float **Y420_2, **Cb420_2, **Cr420_2;
+  
+  ReservaPlano(ancho, alto, &Y420_2);
+  ReservaPlano(ancho/2, alto/2, &Cb420_2);
+  ReservaPlano(ancho/2, alto/2, &Cr420_2);
+  
+  if (CargaYCbCr420(ficheroEntrada, ancho, alto, Y420, Cb420, Cr420) != 0)
+  {
+    printf("Error al leer fichero\n");
+    exit(1);
+  }
+  if (CargaYCbCr420(ficheroSalida, ancho, alto, Y420_2, Cb420_2, Cr420_2) != 0)
+  {
+    printf("Error al leer fichero\n");
+    exit(1);
+  }
+  
+  printf("%f \n", CalculaMSE(Y420, Y420_2, ancho, alto));
+  printf("%f \n", CalculaMSE(Cb420, Cb420_2, ancho/2, alto/2));
+  printf("%f \n", CalculaMSE(Cr420, Cr420_2, ancho/2, alto/2));
+  
+  exit(-1);
+}
+
+
+int main(int argc, char **argv)
 {
   printf("\n--------------------------------\n");
   printf("PRACTICAS REDES MULTIMEDIA (RMM)\n");
@@ -95,7 +144,7 @@ int main(int argc, char **argv)
   printf("--------------------------------\n");
   printf("JPEG2000 - DWT/IDWT\n");
   printf("--------------------------------\n");
-
+  
   ProcesaArgumentos(argc,argv);
 
   if (opcion==YCbCr420aDWT || opcion==DWTaYCbCr420)
@@ -112,7 +161,8 @@ int main(int argc, char **argv)
       {
         printf("Error al leer fichero\n");
         exit(1);
-      }   
+      }
+      
       ConversionYCbCr420aDWT(ancho, alto, Y420, Cb420, Cr420);
       if (GuardaDWT420(ficheroSalida, ancho, alto, Y420, Cb420, Cr420) != 0)
       {
