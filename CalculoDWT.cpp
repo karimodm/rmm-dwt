@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "CalculoDWT.h"
 #include "Pixel.h"
+
 
 /* Paso alto multiplicar por 2 */
 
@@ -236,7 +238,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   free_2d_f(ancho/2, alto/2, _Cb420);
   free_2d_f(ancho/2, alto/2, _Cr420);
   
-  // TEST
+  /* TEST
   float Muestras[32]= {33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43,33,21,22,11,35,34,33,64,66,44,33,64,34,12,55,43};
   float tmp[32];
   float hlv1[32] = {0.0};
@@ -252,7 +254,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   }
   
   // proceso inverso
-  /*for (int i=0; i<32; i++) {
+  for (int i=0; i<32; i++) {
     if (i%2 == 0) {
       hlv1[i] = Muestras[i/2];
     }
@@ -263,7 +265,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
   
   for (int i=0; i<32; i++) {
     Muestras[i] = aplica_kernel_f(i, 1, 32, hlv1, true, true) + aplica_kernel_f(i, 1, 32, hlv2, false, true);
-  }*/
+  }
   for (int i=0; i<32; i++) {
     if (i%2 == 0) {
       hlv1[i] = Muestras[i/2];
@@ -281,7 +283,7 @@ void DWT_f_filas(int ancho, int alto, float **Y420, float **Cb420, float **Cr420
     printf("%.2f ", Muestras[i]);
     if(!((i+1)%11)) printf("\n");
   }
-  printf("\n");
+  printf("\n");*/
 }
 
 void DWT_f_filas_i(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
@@ -545,13 +547,17 @@ void DWT_columnas_i(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {
 }
 
 void ConversionYCbCr420aDWT(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-  DWT_f_filas(ancho, alto, Y420, Cb420, Cr420);
-  DWT_f_columnas(ancho, alto, Y420, Cb420, Cr420);
+  for (int nivel=0, an = ancho, al = alto; nivel < 6; nivel++, an /= 2, al /= 2) {
+    DWT_f_filas(an, al, Y420, Cb420, Cr420);
+    DWT_f_columnas(an, al, Y420, Cb420, Cr420);
+  }
 }
 
 void ConversionDWTaYCbCr420(int ancho, int alto, float **Y420, float **Cb420, float **Cr420) {
-  DWT_f_filas_i(ancho, alto, Y420, Cb420, Cr420);
-  DWT_f_columnas_i(ancho, alto, Y420, Cb420, Cr420);
+  for (int nivel=5, an = ancho/pow(2,nivel), al = alto/pow(2,nivel); nivel >= 0; nivel--, an *= 2, al *= 2) {
+    DWT_f_filas_i(an, al, Y420, Cb420, Cr420);
+    DWT_f_columnas_i(an, al, Y420, Cb420, Cr420);
+  }
 }
 
 void ConversionYCbCr42iaDWi(int ancho, int alto, int **Y420, int **Cb420, int **Cr420) {

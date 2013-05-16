@@ -89,17 +89,19 @@ void ProcesaArgumentos(int argc, char **argv)
   }
 }
 
-float CalculaMSE(float **Y1, float **Y2, int ancho, int alto)
+long double CalculaMSE(float **Y1, float **Y2, int ancho, int alto)
 {
 	// COMPLETAR
-  float res = 0.0;
+  long double res = 0.0;
   
   for (int al=0; al<alto; al++) {
     for (int an=0; an<ancho; an++) {
-      res += ((Y1[al][an]-Y2[al][an])*(Y1[al][an]-Y2[al][an]));
+      long double _Y1 = (long double)Y1[al][an];
+      long double _Y2 = (long double)Y2[al][an];
+      res += ((_Y1-_Y2)*(_Y1-_Y2));
     }
   }
-  res /= (float)(ancho*alto);
+  res /= (long double)(ancho*alto);
   
   return res;
 }
@@ -128,9 +130,9 @@ void PRUEBA() {
     exit(1);
   }
   
-  printf("%f \n", CalculaMSE(Y420, Y420_2, ancho, alto));
-  printf("%f \n", CalculaMSE(Cb420, Cb420_2, ancho/2, alto/2));
-  printf("%f \n", CalculaMSE(Cr420, Cr420_2, ancho/2, alto/2));
+  printf("%.50Lf \n", CalculaMSE(Y420, Y420_2, ancho, alto));
+  printf("%.50Lf \n", CalculaMSE(Cb420, Cb420_2, ancho/2, alto/2));
+  printf("%.50Lf \n", CalculaMSE(Cr420, Cr420_2, ancho/2, alto/2));
   
   exit(-1);
 }
